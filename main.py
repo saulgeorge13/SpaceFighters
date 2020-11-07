@@ -2,6 +2,7 @@ import pygame
 import os
 import time
 import random
+pygame.font.init()
 
 # Window Setup
 WIDTH = 750
@@ -24,6 +25,39 @@ GREEN_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_green.png"))
 PLAYER_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_yellow.png"))
 
 # Background
-Background = pygame.image.load(os.path.join("assets", "background-black.png"))
+BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background-black.png")), (WIDTH, HEIGHT))
+
+# Main Function
+def main():
+    run = True
+    fps = 60
+    level = 1
+    lives = 3
+    mainFont = pygame.font.SysFont("calibri", 50)
+    clock = pygame.time.Clock()
+
+    # Function to handle drawing of assets
+    def redrawWindow():
+        VIEW_WINDOW.blit(BACKGROUND, (0,0))
+        # Draw Text
+        LivesLabel = mainFont.render(f"Lives:{lives}", 1, (255, 255, 255))
+        LevelLabel = mainFont.render(f"Level:{level}", 1, (255, 255, 255))
+        VIEW_WINDOW.blit(LivesLabel, (10,10))
+        VIEW_WINDOW.blit(LevelLabel, (WIDTH - LevelLabel.get_width() - 10,10))
+        # Update display with redrawn assets
+        pygame.display.update()
+
+    while run:
+        clock.tick(fps)
+        redrawWindow()
+        # Check for events
+        for event in pygame.event.get():
+            # Check for quit
+            if event.type == pygame.QUIT:
+                run = False
+
+# Run Main
+main()
+
 
 
