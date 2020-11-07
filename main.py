@@ -2,30 +2,12 @@ import pygame
 import os
 import time
 import random
+import Assets
+import Player
+import Ship
+
 pygame.font.init()
 
-# Window Setup
-WIDTH = 750
-HEIGHT = 750
-VIEW_WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("SPACE FIGHTERS")
-
-# Load Images from assets
-
-# Ships
-RED_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_red_small.png"))
-BLUE_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_blue_small.png"))
-GREEN_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_green_small.png"))
-PLAYER_SPACE_SHIP = pygame.image.load(os.path.join("assets", "pixel_ship_yellow.png"))
-
-# Lasers
-RED_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_red.png"))
-BLUE_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_blue.png"))
-GREEN_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_green.png"))
-PLAYER_LASER = pygame.image.load(os.path.join("assets", "pixel_laser_yellow.png"))
-
-# Background
-BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background-black.png")), (WIDTH, HEIGHT))
 
 # Main Function
 def main():
@@ -34,16 +16,21 @@ def main():
     level = 1
     lives = 3
     mainFont = pygame.font.SysFont("calibri", 50)
+    playerVelocity = 5
+    player = Player.Player(300, 650)
+
     clock = pygame.time.Clock()
 
     # Function to handle drawing of assets
     def redrawWindow():
-        VIEW_WINDOW.blit(BACKGROUND, (0,0))
+        Assets.viewWindow.blit(Assets.BACKGROUND, (0, 0))
         # Draw Text
         LivesLabel = mainFont.render(f"Lives:{lives}", 1, (255, 255, 255))
         LevelLabel = mainFont.render(f"Level:{level}", 1, (255, 255, 255))
-        VIEW_WINDOW.blit(LivesLabel, (10,10))
-        VIEW_WINDOW.blit(LevelLabel, (WIDTH - LevelLabel.get_width() - 10,10))
+        Assets.viewWindow.blit(LivesLabel, (10, 10))
+        Assets.viewWindow.blit(LevelLabel, (Assets.WIDTH - LevelLabel.get_width() - 10, 10))
+        # Draw the ship
+        player.draw(Assets.viewWindow)
         # Update display with redrawn assets
         pygame.display.update()
 
@@ -55,9 +42,17 @@ def main():
             # Check for quit
             if event.type == pygame.QUIT:
                 run = False
+        # Check for key presses and move ship
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a] and (player.x - playerVelocity > 0):
+            player.x -= playerVelocity
+        if keys[pygame.K_d] and (player.x + playerVelocity + player.get_width() < Assets.WIDTH):
+            player.x += playerVelocity
+        if keys[pygame.K_w] and (player.y - playerVelocity > 0):
+            player.y -= playerVelocity
+        if keys[pygame.K_s] and (player.y + playerVelocity + player.get_height() < Assets.HEIGHT):
+            player.y += playerVelocity
+
 
 # Run Main
 main()
-
-
-
