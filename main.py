@@ -3,6 +3,7 @@ import os
 import time
 import random
 
+# Window Setup
 WIDTH = 750
 HEIGHT = 750
 VIEW_WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
