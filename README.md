@@ -9,3 +9,9 @@ I believe this should not take me too long.
 
 Also as a bonus I won't have to go searching for an emulator
 next time I'm in a nostalgic mood.
+
+
+
+To Add:
+    different colored enemies have different healths??
+    random spawns can't overlap

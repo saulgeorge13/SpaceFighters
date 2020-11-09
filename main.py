@@ -4,6 +4,7 @@ import time
 import random
 import Assets
 import Player
+import Enemy
 import Ship
 
 pygame.font.init()
@@ -13,9 +14,17 @@ pygame.font.init()
 def main():
     run = True
     fps = 60
-    level = 1
+    level = 0
     lives = 3
+    lost = False
+    lostCount = 0
     mainFont = pygame.font.SysFont("calibri", 50)
+    lostFont = pygame.font.SysFont("calibri", 75)
+
+    enemies = []
+    waveLength = 0
+    enemyVelocity = 1
+
     playerVelocity = 5
     player = Player.Player(300, 650)
 
@@ -24,25 +33,59 @@ def main():
     # Function to handle drawing of assets
     def redrawWindow():
         Assets.viewWindow.blit(Assets.BACKGROUND, (0, 0))
+
         # Draw Text
-        LivesLabel = mainFont.render(f"Lives:{lives}", 1, (255, 255, 255))
-        LevelLabel = mainFont.render(f"Level:{level}", 1, (255, 255, 255))
-        Assets.viewWindow.blit(LivesLabel, (10, 10))
-        Assets.viewWindow.blit(LevelLabel, (Assets.WIDTH - LevelLabel.get_width() - 10, 10))
+        livesLabel = mainFont.render(f"Lives:{lives}", 1, (255, 255, 255))
+        levelLabel = mainFont.render(f"Level:{level}", 1, (255, 255, 255))
+        Assets.viewWindow.blit(livesLabel, (10, 10))
+        Assets.viewWindow.blit(levelLabel, (Assets.WIDTH - levelLabel.get_width() - 10, 10))
+
+        # Draw all enemies
+        for enemy in enemies:
+            enemy.draw(Assets.viewWindow)
+
         # Draw the ship
         player.draw(Assets.viewWindow)
+
+        # Draw loss screen
+        if lost:
+            lostLabel = lostFont.render("You Lost!", 1, (255, 255, 255))
+            Assets.viewWindow.blit(lostLabel, (Assets.WIDTH/2 - lostLabel.get_width()/2, Assets.HEIGHT/2))
+
         # Update display with redrawn assets
         pygame.display.update()
 
     while run:
         clock.tick(fps)
         redrawWindow()
+
+        # Check if game is lost
+        if lives < 0:
+            lost = True
+            lostCount += 1
+        if lost:
+            if lostCount > fps * 5:
+                run = False
+            else:
+                continue
+
+        # Spawn enemies after updating to level
+        if len(enemies) == 0:
+            level += 1
+            waveLength += 5
+            for i in range(waveLength):
+                enemy = Enemy.Enemy(random.randrange(50, Assets.WIDTH-50), random.randrange(-1500, -100),
+                                    random.choice(["red", "blue", "green"]))
+                enemies.append(enemy)
+
         # Check for events
         for event in pygame.event.get():
+
             # Check for quit
             if event.type == pygame.QUIT:
                 run = False
-        # Check for key presses and move ship
+
+        # PLayer ship movement
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a] and (player.x - playerVelocity > 0):
             player.x -= playerVelocity
@@ -52,6 +95,14 @@ def main():
             player.y -= playerVelocity
         if keys[pygame.K_s] and (player.y + playerVelocity + player.get_height() < Assets.HEIGHT):
             player.y += playerVelocity
+
+        # Enemy ship movement
+        for enemy in enemies:
+            enemy.move(enemyVelocity)
+            # Reduce lives if beaten
+            if enemy.y + enemy.get_height() > Assets.HEIGHT:
+                lives -= 1
+                enemies.remove(enemy)
 
 
 # Run Main
