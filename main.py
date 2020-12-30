@@ -24,6 +24,7 @@ def main():
     enemies = []
     waveLength = 0
     enemyVelocity = 1
+    laserVelocity = 5
 
     playerVelocity = 5
     player = Player.Player(300, 650)
@@ -96,13 +97,22 @@ def main():
         if keys[pygame.K_s] and (player.y + playerVelocity + player.get_height() < Assets.HEIGHT):
             player.y += playerVelocity
 
+        # Laser shooting
+        if keys[pygame.K_SPACE]:
+            player.shoot()
+
         # Enemy ship movement
         for enemy in enemies:
             enemy.move(enemyVelocity)
+            enemy.move_lasers(laserVelocity, player)
             # Reduce lives if beaten
             if enemy.y + enemy.get_height() > Assets.HEIGHT:
                 lives -= 1
                 enemies.remove(enemy)
+
+        player.move_lasers(-laserVelocity, enemies)
+
+
 
 
 # Run Main
