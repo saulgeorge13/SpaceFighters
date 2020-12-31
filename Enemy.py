@@ -14,7 +14,7 @@ class Enemy(Ship.Ship):
     def __init__(self, x, y, color, health=100):
         super().__init__(x, y, health)
         self.color = color
-        self.shipImg, self.lasersImg = self.COLOR_MAP[color]
+        self.shipImg, self.laserImg = self.COLOR_MAP[color]
         self.mask = pygame.mask.from_surface(self.shipImg)
 
     def move(self, velocity):

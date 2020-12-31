@@ -24,3 +24,17 @@ class Player(Ship.Ship):
                     if laser.collision(obj):
                         objs.remove(obj)
                         self.lasers.remove(laser)
+
+    # Draws a healthbar with appropriate levels
+    def healthbar(self, window):
+        pygame.draw.rect(window, (255, 0, 0),
+                         (self.x, self.y + self.shipImg.get_height() + 10, self.shipImg.get_width(), 10))
+        pygame.draw.rect(window, (0, 255, 0),
+                         (self.x, self.y + self.shipImg.get_height() + 10,
+                          self.shipImg.get_width() * (self.health / self.maxHealth), 10))
+
+    # Overload draw to add healthbar
+    def draw(self, window):
+        super().draw(window)
+        self.healthbar(window)
+

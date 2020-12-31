@@ -6,6 +6,7 @@ import Assets
 import Player
 import Enemy
 import Ship
+import Laser
 
 pygame.font.init()
 
@@ -51,7 +52,7 @@ def main():
         # Draw loss screen
         if lost:
             lostLabel = lostFont.render("You Lost!", 1, (255, 255, 255))
-            Assets.viewWindow.blit(lostLabel, (Assets.WIDTH/2 - lostLabel.get_width()/2, Assets.HEIGHT/2))
+            Assets.viewWindow.blit(lostLabel, (Assets.WIDTH / 2 - lostLabel.get_width() / 2, Assets.HEIGHT / 2))
 
         # Update display with redrawn assets
         pygame.display.update()
@@ -75,7 +76,7 @@ def main():
             level += 1
             waveLength += 5
             for i in range(waveLength):
-                enemy = Enemy.Enemy(random.randrange(50, Assets.WIDTH-50), random.randrange(-1500, -100),
+                enemy = Enemy.Enemy(random.randrange(50, Assets.WIDTH - 50), random.randrange(-1500, -100),
                                     random.choice(["red", "blue", "green"]))
                 enemies.append(enemy)
 
@@ -105,14 +106,20 @@ def main():
         for enemy in enemies:
             enemy.move(enemyVelocity)
             enemy.move_lasers(laserVelocity, player)
-            # Reduce lives if beaten
-            if enemy.y + enemy.get_height() > Assets.HEIGHT:
+
+            # Enemy shooting probability
+            if random.randrange(0, 120) == 1:
+                enemy.shoot()
+
+            # Enemy collision or breach
+            if Laser.collide(enemy, player):
+                player.health -= 10
+                enemies.remove(enemy)
+            elif enemy.y + enemy.get_height() > Assets.HEIGHT:
                 lives -= 1
                 enemies.remove(enemy)
 
         player.move_lasers(-laserVelocity, enemies)
-
-
 
 
 # Run Main
