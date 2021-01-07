@@ -114,6 +114,9 @@ def main():
             # Enemy collision or breach
             if Laser.collide(enemy, player):
                 player.health -= 10
+                if player.health == 0:
+                    player.health = 100
+                    lives -= 1
                 enemies.remove(enemy)
             elif enemy.y + enemy.get_height() > Assets.HEIGHT:
                 lives -= 1
@@ -122,5 +125,21 @@ def main():
         player.move_lasers(-laserVelocity, enemies)
 
 
-# Run Main
-main()
+# Main Menu function
+def main_menu():
+    title_font = pygame.font.SysFont("calibri", 70)
+    run = True
+    while run:
+        Assets.viewWindow.blit(Assets.BACKGROUND, (0, 0))
+        title_label = title_font.render("Press the mouse to begin...", 1, (255, 255, 255))
+        Assets.viewWindow.blit(title_label, (Assets.WIDTH / 2 - title_label.get_width() / 2, 350))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                main()
+    pygame.quit()
+
+
+main_menu()
